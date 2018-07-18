@@ -48,5 +48,26 @@ file = open('LANL-CM5-1994-4.1-cln.swf', 'rb')
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line)]
 
+# dictionary that maps column name to integer index
+column = {"#": 0,
+          "Submit Time": 1,
+          "Wait Time": 2,
+          "Run Time": 3,
+          "CPUs": 4,
+          "CPU Time": 5,
+          "Mem": 6,
+          "Req CPUs": 7,
+          "Req Time": 8,
+          "Req Mem": 9,
+          "Status": 10,
+          "User": 11,
+          "Group": 12,
+          "Exec": 13,
+          "Queue": 14,
+          "Partition": 15}
+          
+print( column )
+          
+
 job_count = len(dataset)
 print( "{} total jobs in the dataset".format(job_count) )
