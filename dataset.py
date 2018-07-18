@@ -49,7 +49,7 @@ file = open('LANL-CM5-1994-4.1-cln.swf', 'rb')
 dataset = [parse_line(line) for line in file if filter(line)]
 
 # dictionary that maps column name to integer index
-column = {"#": 0,
+clmn  =  {"#": 0,
           "Submit Time": 1,
           "Wait Time": 2,
           "Run Time": 3,
@@ -65,9 +65,15 @@ column = {"#": 0,
           "Exec": 13,
           "Queue": 14,
           "Partition": 15}
-          
-print( column )
-          
+
+
+# Cursory test of dataset/clmn structure
+#for job in dataset[0:10]:
+#    print( "Job {}: {} cores requested, {} cores allocated".format(job[ clmn["#"] ],
+#                                                                   job[ clmn["Req CPUs"] ],
+#                                                                   job[ clmn["CPUs"] ]) )
+
+
 
 job_count = len(dataset)
 print( "{} total jobs in the dataset".format(job_count) )
