@@ -75,7 +75,5 @@ clmn  =  {"#": 0,
 #                                                                   job[ clmn["Req CPUs"] ],
 #                                                                   job[ clmn["CPUs"] ]) )
 
-
-
 job_count = len(dataset)
 print( "{} total jobs in the dataset".format(job_count) )
