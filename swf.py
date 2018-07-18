@@ -52,21 +52,21 @@ dataset = [parse_line(line) for line in file if filter(line)]
 
 # dictionary that maps column name to integer index
 clmn  =  {"#": 0,
-          "Submit Time": 1,
-          "Wait Time": 2,
-          "Run Time": 3,
-          "CPUs": 4,
-          "CPU Time": 5,
-          "Mem": 6,
-          "Req CPUs": 7,
-          "Req Time": 8,
-          "Req Mem": 9,
-          "Status": 10,
-          "User": 11,
-          "Group": 12,
-          "Exec": 13,
-          "Queue": 14,
-          "Partition": 15}
+          "submit": 1,
+          "wait": 2,
+          "run": 3,
+          "cpu": 4,
+          "time.cpu": 5, # per core
+          "mem": 6,
+          "cpu.req": 7,
+          "time.req": 8, # requested cpu time
+          "mem.req": 9,
+          "status": 10,
+          "usr": 11,
+          "grp": 12,
+          "exec": 13,
+          "queue": 14,
+          "partition": 15}
 
 
 # Cursory test of dataset/clmn structure
