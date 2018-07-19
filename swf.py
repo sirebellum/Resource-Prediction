@@ -122,22 +122,29 @@ if __name__ == "__main__":
     # relative time to first job for each job
     first_job = dataset[0][ clmn[ "submit" ] ]
     time = [ parse_duration( first_job, job[ clmn["submit"] ] ) \
-                for job in dataset[0:1000] ]
+                for job in dataset[0:5000] ]
     duration = max(time)
     # Memory consumption of each job per cpu
-    mem = [ mem_core( job[ clmn["mem"] ], job[ clmn["cpu.req"] ] ) \
-                for job in dataset[0:1000] ]
-    # CPUs requested for each job
-    cpu = [ parse(job[ clmn["cpu.req"] ]) \
-                for job in dataset[0:1000] ]
+    mem = [ mem_core( job[ clmn["mem"] ], job[ clmn["cpu"] ] ) \
+                for job in dataset[0:5000] ]
+    # CPUs used for each job
+    cpu = [ parse(job[ clmn["cpu"] ]) \
+                for job in dataset[0:5000] ]
     
     # sort by time
-    time, mem = (list(t) for t in zip(*sorted(zip(time, mem))))
+    _, mem = (list(t) for t in zip(*sorted(zip(time, mem))))
     time, cpu = (list(t) for t in zip(*sorted(zip(time, cpu))))
 
-    # Format plot
+    ### Plot Data ###
     plt.xticks(np.arange(0, duration+100, duration/5))
-    
-    #plt.plot(time, mem, 'b-')
+    plt.xlabel('time (s)')
+    # CPUs
+    plt.subplot(2, 1, 1)
     plt.plot(time, cpu, 'b-')
+    plt.ylabel('cores')
+    # Mem
+    plt.subplot(2, 1, 2)
+    plt.plot(time, mem, 'b-')
+    plt.ylabel('mem/core')
+    
     plt.show()
