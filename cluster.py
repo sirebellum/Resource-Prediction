@@ -22,19 +22,18 @@ clmn  =  {"#": 0,
           "partition": 15}
 
 # Total memory usage per job (kb)
-mem_total = [int(job[ clmn["mem"] ])*int(job[ clmn["cpu" ] ]) \
-            for job in swf.dataset]
+mem_total = [ int(job[ clmn["mem"] ]) * int(job[ clmn["cpu" ] ]) \
+            for job in swf.dataset ]
 print( "Max memory allocated for a single job: {} MB".format( max(mem_total)/1024 ) )
 
 swf.dataset = swf.dataset[0:1000] # for testing
 
 # Clustering data:
 # from Towards Autonomic Workload Provisioning for Enterprise Grids and Clouds, Quiroz et. al.
-mem = [int(job[ clmn["mem"] ]) \
-            for job in swf.dataset]
-cpu = [float(job[ clmn["cpu"] ])*float(job[ clmn["time.cpu"] ])/100.0 \
-             for job in swf.dataset]
-
+mem = [ int(job[ clmn["mem.req"] ]) \
+            for job in swf.dataset ]
+cpu = [ float(job[ clmn["cpu.req"] ]) * float(job[ clmn["time.req"] ]) / 100.0 \
+            for job in swf.dataset ]
              
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
