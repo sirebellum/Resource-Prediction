@@ -49,12 +49,10 @@ def filter(line, options=None):
             return False # Skip commented lines
         if string[ clmn["status"] ] != "1":
             return False # Skip uncompleted jobs
-        if string[ clmn["cpu.req"] ] == "-1":
-            return False # Skip jobs without a cpu number request
             
         # other filtering logic (to be implemented [tbi]) #
     
-        return True # Allow all for now
+        return True
 
         
     # Options set up mode
