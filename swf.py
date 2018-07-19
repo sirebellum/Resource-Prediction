@@ -54,6 +54,16 @@ def mem_core(total_mem, cpus):
         
     return mem
     
+# handle "unknown" fields
+def parse(value):
+
+    try:
+        value = int(value)
+    except ValueError:
+        return 0
+        
+    return value
+    
 # Filter function for each line to be used in list comprehension.
 # Not specifying an option argument puts the function in "parse" mode
 # Specifying an option argument will set up filter options for the current session
@@ -108,21 +118,26 @@ print( "{} total jobs in the dataset".format(job_count) )
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     
+    ### Accumulate Data ###
     # relative time to first job for each job
     first_job = dataset[0][ clmn[ "submit" ] ]
     time = [ parse_duration( first_job, job[ clmn["submit"] ] ) \
                 for job in dataset[0:1000] ]
     duration = max(time)
-    
     # Memory consumption of each job per cpu
     mem = [ mem_core( job[ clmn["mem"] ], job[ clmn["cpu.req"] ] ) \
+                for job in dataset[0:1000] ]
+    # CPUs requested for each job
+    cpu = [ parse(job[ clmn["cpu.req"] ]) \
                 for job in dataset[0:1000] ]
     
     # sort by time
     time, mem = (list(t) for t in zip(*sorted(zip(time, mem))))
+    time, cpu = (list(t) for t in zip(*sorted(zip(time, cpu))))
 
     # Format plot
     plt.xticks(np.arange(0, duration+100, duration/5))
     
-    plt.plot(time, mem, 'b-')
+    #plt.plot(time, mem, 'b-')
+    plt.plot(time, cpu, 'b-')
     plt.show()
