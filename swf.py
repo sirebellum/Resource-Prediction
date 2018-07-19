@@ -39,7 +39,7 @@ def filter(line, options=None):
         return "Parsing unimplemented"
 
         
-### MAIN ###
+### Read Dataset ###
 # dataset from http://www.cs.huji.ac.il/labs/parallel/workload/
 filename = 'LANL-CM5-1994-4.1-cln.swf'
 print( "Accessing {} dataset...".format( filename.strip(".swf") ) )
