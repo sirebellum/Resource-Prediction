@@ -69,8 +69,8 @@ def filter(line, options=None):
     
         if ";" in str(line):
             return False # Skip commented lines
-        if string[ clmn["status"] ] != "0000":
-            return False # Skip uncompleted jobs
+        #if string[ clmn["status"] ] != "0000":
+        #    return False # Skip uncompleted jobs
             
         # other filtering logic (to be implemented [tbi]) #
     
