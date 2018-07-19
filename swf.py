@@ -49,7 +49,7 @@ def mem_core(total_mem, cpus):
 
     try:
         mem = int(total_mem) / int(cpus)
-    except ValueError:
+    except ValueError: # if unknown
         return float(0)
         
     return mem
@@ -71,8 +71,6 @@ def filter(line, options=None):
             return False # Skip commented lines
         if string[ clmn["status"] ] != "0000":
             return False # Skip uncompleted jobs
-        if "unknown" in str(line):
-            return False # Skip jobs with unknown params
             
         # other filtering logic (to be implemented [tbi]) #
     
