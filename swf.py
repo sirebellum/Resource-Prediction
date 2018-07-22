@@ -45,7 +45,7 @@ def parse_duration(start, end):
     return elapsed.total_seconds()
     
 # Calculate memory per core
-def mem_core(total_mem, cpus):
+def memcore(total_mem, cpus):
 
     try:
         mem = int(total_mem) / int(cpus)
@@ -115,25 +115,25 @@ dataset = [parse_line(line) for line in file if filter(line)]
 job_count = len(dataset)
 print( "{} total jobs in the dataset".format(job_count) )
 
+### Accumulate Data ###
+# relative time to first job for each job
+first_job = dataset[0][ clmn[ "submit" ] ]
+time = [ parse_duration( first_job, job[ clmn["submit"] ] ) \
+            for job in dataset ]
+duration = max(time)
+# Memory consumption of each job per cpu
+mem = [ mem_core( job[ clmn["mem"] ], job[ clmn["cpu"] ] ) \
+            for job in dataset ]
+# CPUs used for each job
+cpu = [ parse(job[ clmn["cpu"] ]) \
+            for job in dataset ]
+
+# sort by time
+_, mem = (list(t) for t in zip(*sorted(zip(time, mem))))
+time, cpu = (list(t) for t in zip(*sorted(zip(time, cpu))))
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-    
-    ### Accumulate Data ###
-    # relative time to first job for each job
-    first_job = dataset[0][ clmn[ "submit" ] ]
-    time = [ parse_duration( first_job, job[ clmn["submit"] ] ) \
-                for job in dataset[0:5000] ]
-    duration = max(time)
-    # Memory consumption of each job per cpu
-    mem = [ mem_core( job[ clmn["mem"] ], job[ clmn["cpu"] ] ) \
-                for job in dataset[0:5000] ]
-    # CPUs used for each job
-    cpu = [ parse(job[ clmn["cpu"] ]) \
-                for job in dataset[0:5000] ]
-    
-    # sort by time
-    _, mem = (list(t) for t in zip(*sorted(zip(time, mem))))
-    time, cpu = (list(t) for t in zip(*sorted(zip(time, cpu))))
 
     ### Plot Data ###
     plt.xticks(np.arange(0, duration+100, duration/5))
