@@ -45,7 +45,7 @@ def parse_duration(start, end):
     return elapsed.total_seconds()
     
 # Calculate memory per core
-def memcore(total_mem, cpus):
+def mempercore(total_mem, cpus):
 
     try:
         mem = int(total_mem) / int(cpus)
@@ -57,17 +57,15 @@ def memcore(total_mem, cpus):
 # handle "unknown" fields
 def parse(value):
 
-    try:
-        value = int(value)
-    except ValueError:
+    if value == "unknown":
         return 0
         
     return value
     
 # Filter function for each line to be used in list comprehension.
-# Not specifying an option argument puts the function in "parse" mode
-# Specifying an option argument will set up filter options for the current session
-# Automatically filters out commented lines and uncompleted jobs.
+# Specifying an option argument will filter for those options.
+# Format is (index, -/+value) per option, where -/+ mean exclude/include-only
+# Automatically filters out commented lines.
 def filter(line, options=None):
     global clmn
     
@@ -79,18 +77,23 @@ def filter(line, options=None):
     
         if ";" in str(line):
             return False # Skip commented lines
-        #if string[ clmn["status"] ] != "0000":
-        #    return False # Skip uncompleted jobs
-            
-        # other filtering logic (to be implemented [tbi]) #
-    
+
         return True
 
+    # Parse with options
+    else:
+        for option in options:
         
-    # Options set up mode
-    if len(options) == 0:
-        
-        # Options parsing (tbi) #
+            if option[1][0] == "-": #Exclude
+                if string[ option[0] ] == option[1][1:]:
+                    return False
+                    
+            elif option[1][0] == "+": #Include only
+                if string[ option[0] ] != option[1][1:]:
+                    return False
+                    
+            else:
+                exit("Please specify +/- before option[1]: (index, -/+value)")
         
         return "Parsing unimplemented"
         
@@ -122,10 +125,10 @@ time = [ parse_duration( first_job, job[ clmn["submit"] ] ) \
             for job in dataset ]
 duration = max(time)
 # Memory consumption of each job per cpu
-mem = [ mem_core( job[ clmn["mem"] ], job[ clmn["cpu"] ] ) \
+mem = [ mempercore( job[ clmn["mem"] ], job[ clmn["cpu"] ] ) \
             for job in dataset ]
 # CPUs used for each job
-cpu = [ parse(job[ clmn["cpu"] ]) \
+cpu = [ int( parse( job[ clmn["cpu"] ] ) ) \
             for job in dataset ]
 
 # sort by time
