@@ -97,14 +97,13 @@ def filter(line, options=None):
         
         return "Parsing unimplemented"
         
-        
+### TBI: funcionify dataset data accumulation with filename and options arguments
+
 ### Read Dataset ###
 # dataset from http://www.cs.huji.ac.il/labs/parallel/workload/
 filename = 'LANL-CM5-1994-0b'
 print( "Accessing {} dataset...".format( filename.strip(".swf") ) )
 file = open(filename, 'rb')
-
-# Set filter options (tbi) #
 
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line)]
