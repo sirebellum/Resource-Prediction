@@ -31,14 +31,10 @@ memreq = swf.memreq
 pindexreq = swf.pindexreq
 
 # Consolidate data
-data = [ [cpu[x], mem[x], pindex[x] ] for x in range(len(pindex)) ]
+data = [ [cpu[x], mem[x], pindex[x] ] for x in range(len(pindexreq)) ]
 
 # Predict
 w = [predict( job[1], job[0], job[2] ) for job in data]
-
-# Consolidate again
-data = [ [cpu[x], mem[x], pindex[x], w[x] ] for x in range(len(w)) ]
-data = np.array(data)
 
 if __name__ == "__main__":
     # Plot
@@ -66,4 +62,11 @@ if __name__ == "__main__":
     ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.2)
     plt.show()
     
+    # Compute accuracy
+    ratios = [ w[i] / wall_time[i] for i in range(len(w)) ]
+    average_ratio = sum(ratios) / len(ratios)
     
+    averages = [ sum(ratios[i:i+1000]) / len(ratios[i:i+1000]) \
+                         for i in range(0, len(ratios), 1000) ]
+    
+    print("Average ratio of predicted to expected response time: {}".format(average_ratio))
