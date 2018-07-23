@@ -94,7 +94,7 @@ def filter(line, options=None):
                     return False
                     
             else:
-                exit("Please specify +/- before option[1]: (index, -/+value)")
+                exit("Please specify +/- before option: \"{}\"".format(option[1]))
         
         return "Parsing unimplemented"
         
@@ -106,8 +106,12 @@ filename = 'LANL-CM5-1994-0b'
 print( "Accessing {} dataset...".format( filename.strip(".swf") ) )
 file = open(filename, 'rb')
 
+# Ignore cases where # of used CPUs is unknown
+options = list()
+options.append( [ clmn["cpu"], "unknown"] )
+
 # parse swf file line by line
-dataset = [parse_line(line) for line in file if filter(line)]
+dataset = [parse_line(line) for line in file if filter(line, options=options)]
 
 # Cursory test of dataset/clmn structure
 #for job in dataset[0:10]:
@@ -123,7 +127,6 @@ print( "{} total jobs in the dataset".format(job_count) )
 first_job = dataset[0][ clmn[ "submit" ] ]
 time = [ parse_duration( first_job, job[ clmn["start"] ] ) \
             for job in dataset ]
-duration = max(time) - min(time)
 # Memory consumption of each job per cpu
 mem = [ mempercore( job[ clmn["mem"] ], job[ clmn["cpu"] ] ) \
             for job in dataset ]
@@ -133,16 +136,21 @@ cpu = [ int( parse( job[ clmn["cpu"] ] ) ) \
 # Wall time per job
 wall_time = [ parse_duration( job[ clmn["start"] ], job[ clmn["end"] ] ) \
             for job in dataset ]
+# Parallelism affinity per job cpu.time/CPUs
+pindex = [ float(parse(job[ clmn["time.cpu"] ])) / float(parse(job[ clmn["cpu"] ])) \
+            for job in dataset ]
 
 # sort by time
 _, mem = (list(t) for t in zip(*sorted(zip(time, mem))))
 _, cpu = (list(t) for t in zip(*sorted(zip(time, cpu))))
+_, pindex = (list(t) for t in zip(*sorted(zip(time, pindex))))
 time, wall_time = (list(t) for t in zip(*sorted(zip(time, wall_time))))
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     ### Plot Data ###
+    duration = max(time[0:5000]) - min(time[0:5000])
     plt.xticks(np.arange(0, duration+100, duration/5))
     plt.xlabel('time (s)')
     # Wall time
@@ -151,7 +159,7 @@ if __name__ == "__main__":
     plt.ylabel('walltime')
     # average response time per core
     plt.subplot(4, 1, 2)
-    plt.plot(time[0:5000], [0 for x in range(0,5000)], 'b-')
+    plt.plot(time[0:5000], pindex[0:5000], 'b-')
     plt.ylabel('p index')
     # CPUs
     plt.subplot(4, 1, 3)
