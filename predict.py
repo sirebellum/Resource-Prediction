@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # Match paper's orientation
     ax.invert_xaxis()
     # Plot real data over response surface
-    ax.scatter(mem, cpu, pindex, c=pindexreq, cmap=plt.get_cmap('RdYlGn'), alpha=0.75)
+    ax.scatter(memreq, cpureq, pindexreq, c=pindex, cmap=plt.get_cmap('RdYlGn'), alpha=0.75)
     ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.35)
     
     
