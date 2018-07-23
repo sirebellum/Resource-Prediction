@@ -108,8 +108,8 @@ file = open(filename, 'rb')
 
 # Filtering options
 options = list()
-options.append( [ clmn["cpu"], "-unknown"] ) # Ignore cases where # of used CPUs is unknown
-options.append( [ clmn["cpu.req"], "-unknown"] ) # Ignore cases where # of req. CPUs is unknown
+#options.append( [ clmn["cpu"], "-unknown"] ) # Ignore cases where # of used CPUs is unknown
+#options.append( [ clmn["cpu.req"], "-unknown"] ) # Ignore cases where # of req. CPUs is unknown
 #options.append( [ clmn["status"], "+0000"] ) # Ignore unfinished jobs
 
 # parse swf file line by line
