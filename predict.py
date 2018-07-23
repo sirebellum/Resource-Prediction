@@ -31,14 +31,14 @@ memreq = swf.memreq
 pindexreq = swf.pindexreq
 
 # Consolidate data
-data = [ [cpu[x], mem[x], pindex[x] ] for x in range(len(pindexreq)) ]
+data = [ [cpureq[x], memreq[x], pindexreq[x] ] for x in range(len(pindexreq)) ]
 
 # Predict
 w = [predict( job[1], job[0], job[2] ) for job in data]
 
 if __name__ == "__main__":
     # Plot
-    fig = plt.figure()
+    fig = plt.figure(1)
     ax = fig.add_subplot(111, projection='3d')
 
     x = np.arange(0, 3.5e4, 0.125e4) # mem
@@ -58,15 +58,20 @@ if __name__ == "__main__":
     ax.set_zlabel('pindex')
     
     ax.invert_xaxis() # Match paper's orientation
-    ax.scatter(mem[0:5000], cpu[0:5000], pindex[0:5000], c=wall_time[0:5000], cmap=plt.get_cmap('RdYlGn'), alpha=1)
+    ax.scatter(mem[0:5000], cpu[0:5000], pindex[0:5000], c=pindexreq[0:5000], cmap=plt.get_cmap('RdYlGn'), alpha=1)
     ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.2)
-    plt.show()
     
     # Compute accuracy
-    ratios = [ w[i] / wall_time[i] for i in range(len(w)) ]
+    ratios = [ w[i] / pindexreq[i] for i in range(len(w)) ]
     average_ratio = sum(ratios) / len(ratios)
     
     averages = [ sum(ratios[i:i+1000]) / len(ratios[i:i+1000]) \
                          for i in range(0, len(ratios), 1000) ]
     
     print("Average ratio of predicted to expected response time: {}".format(average_ratio))
+    # Plot
+    fig2 = plt.figure(2)
+    fig2.add_subplot(111)
+    plt.plot(averages)
+    
+    plt.show()
