@@ -20,31 +20,34 @@ def predict(mem, cpu, pindex):
 
     return w
     
+ # Get data
+cpu = swf.cpu
+mem = swf.mem
+pindex = swf.pindex
+wall_time = swf.wall_time
+
+cpureq = swf.cpureq
+memreq = swf.memreq
+pindexreq = swf.pindexreq
+
+# Consolidate data
+data = [ [cpu[x], mem[x], pindex[x] ] for x in range(len(pindex)) ]
+
+# Predict
+w = [predict( job[1], job[0], job[2] ) for job in data]
+
+# Consolidate again
+data = [ [cpu[x], mem[x], pindex[x], w[x] ] for x in range(len(w)) ]
+data = np.array(data)
 
 if __name__ == "__main__":
-    
-    # Get data
-    cpu = swf.cpu
-    mem = swf.mem
-    pindex = swf.pindex
-    
-    # Consolidate data
-    data = [ [cpu[x], mem[x], pindex[x] ] for x in range(len(pindex)) ]
-    
-    # Predict
-    w = [predict( job[1], job[0], job[2] ) for job in data]
-    
-    # Consolidate again
-    data = [ [cpu[x], mem[x], pindex[x], w[x] ] for x in range(len(w)) ]
-    data = np.array(data)
-
     # Plot
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    x = np.arange(0, 3e4, 0.125e4)
-    y = np.arange(0, 1000, 50)
-    z = np.arange(0, 4e4, 0.25e4)
+    x = np.arange(0, 3.5e4, 0.125e4) # mem
+    y = np.arange(0, 1100, 50)       # cpu
+    z = np.arange(0, 5e4, 0.25e4)  # pindex
     
     test = np.array(np.meshgrid(x, y, z)).T.reshape(-1,3)
     #test = [ [x[i], y[i], z[i] ] for i in range(len(z)) ]
@@ -54,5 +57,13 @@ if __name__ == "__main__":
     y = [ entry[1] for entry in test ]
     z = [ entry[2] for entry in test ]
     
-    ax.scatter(x, y, z, c=c, cmap=plt.hot())
+    ax.set_xlabel('Memory/VM')
+    ax.set_ylabel('#VMs')
+    ax.set_zlabel('pindex')
+    
+    ax.invert_xaxis() # Match paper's orientation
+    ax.scatter(mem[0:5000], cpu[0:5000], pindex[0:5000], c=wall_time[0:5000], cmap=plt.get_cmap('RdYlGn'), alpha=1)
+    ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.2)
     plt.show()
+    
+    
