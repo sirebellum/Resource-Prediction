@@ -121,7 +121,7 @@ print( "{} total jobs in the dataset".format(job_count) )
 ### Accumulate Data ###
 # relative time to first job for each job
 first_job = dataset[0][ clmn[ "submit" ] ]
-time = [ parse_duration( first_job, job[ clmn["submit"] ] ) \
+time = [ parse_duration( first_job, job[ clmn["start"] ] ) \
             for job in dataset ]
 duration = max(time) - min(time)
 # Memory consumption of each job per cpu
