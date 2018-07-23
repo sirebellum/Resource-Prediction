@@ -1,11 +1,20 @@
 from __future__ import print_function
 
-import sys, os, time
+import sys, os
 import swf # Custom swf reading code
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 
+# Returns 1 if dividing by 0
+def safe_divide(value1, value2):
+
+    if value2 == 0:
+        return 1
+    
+    return value1/value2
+
+# Predict response time based on weighted equations
 def predict(mem, cpu, pindex):
 
     b0, b1, b2, b3, b12, b13, b23, b11, b22, b33 = \
@@ -25,6 +34,7 @@ cpu = swf.cpu
 mem = swf.mem
 pindex = swf.pindex
 wall_time = swf.wall_time
+time = swf.time
 
 cpureq = swf.cpureq
 memreq = swf.memreq
@@ -41,9 +51,9 @@ if __name__ == "__main__":
     fig = plt.figure(1)
     ax = fig.add_subplot(111, projection='3d')
 
-    x = np.arange(0, 3.5e4, 0.125e4) # mem
-    y = np.arange(0, 1100, 50)       # cpu
-    z = np.arange(0, 5e4, 0.25e4)  # pindex
+    x = np.arange(0, 3.5e4, 0.25e4) # mem
+    y = np.arange(0, 1100, 100)       # cpu
+    z = np.arange(0, 5e4, 0.5e4)  # pindex
     
     test = np.array(np.meshgrid(x, y, z)).T.reshape(-1,3)
     #test = [ [x[i], y[i], z[i] ] for i in range(len(z)) ]
@@ -58,11 +68,11 @@ if __name__ == "__main__":
     ax.set_zlabel('pindex')
     
     ax.invert_xaxis() # Match paper's orientation
-    ax.scatter(mem[0:5000], cpu[0:5000], pindex[0:5000], c=pindexreq[0:5000], cmap=plt.get_cmap('RdYlGn'), alpha=1)
-    ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.2)
+    ax.scatter(mem, cpu, pindex, c=pindexreq, cmap=plt.get_cmap('RdYlGn'), alpha=0.75)
+    ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.35)
     
     # Compute accuracy
-    ratios = [ w[i] / pindexreq[i] for i in range(len(w)) ]
+    ratios = [ safe_divide( w[i], pindexreq[i] ) for i in range(len(w)) ]
     average_ratio = sum(ratios) / len(ratios)
     
     averages = [ sum(ratios[i:i+1000]) / len(ratios[i:i+1000]) \
