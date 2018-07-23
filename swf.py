@@ -3,6 +3,7 @@ from __future__ import print_function
 import sys, os, time
 import numpy as np
 from datetime import datetime
+from operator import itemgetter
 
 # dictionary that maps column name to integer index
 clmn  =  {"#": 0,
@@ -122,17 +123,21 @@ print( "{} total jobs in the dataset".format(job_count) )
 first_job = dataset[0][ clmn[ "submit" ] ]
 time = [ parse_duration( first_job, job[ clmn["submit"] ] ) \
             for job in dataset ]
-duration = max(time)
+duration = max(time) - min(time)
 # Memory consumption of each job per cpu
 mem = [ mempercore( job[ clmn["mem"] ], job[ clmn["cpu"] ] ) \
             for job in dataset ]
 # CPUs used for each job
 cpu = [ int( parse( job[ clmn["cpu"] ] ) ) \
             for job in dataset ]
+# Wall time per job
+wall_time = [ parse_duration( job[ clmn["start"] ], job[ clmn["end"] ] ) \
+            for job in dataset ]
 
 # sort by time
 _, mem = (list(t) for t in zip(*sorted(zip(time, mem))))
-time, cpu = (list(t) for t in zip(*sorted(zip(time, cpu))))
+_, cpu = (list(t) for t in zip(*sorted(zip(time, cpu))))
+time, wall_time = (list(t) for t in zip(*sorted(zip(time, wall_time))))
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
@@ -140,13 +145,21 @@ if __name__ == "__main__":
     ### Plot Data ###
     plt.xticks(np.arange(0, duration+100, duration/5))
     plt.xlabel('time (s)')
+    # Wall time
+    plt.subplot(4, 1, 1)
+    plt.plot(time[0:5000], wall_time[0:5000], 'b-')
+    plt.ylabel('walltime')
+    # average response time per core
+    plt.subplot(4, 1, 2)
+    plt.plot(time[0:5000], [0 for x in range(0,5000)], 'b-')
+    plt.ylabel('p index')
     # CPUs
-    plt.subplot(2, 1, 1)
-    plt.plot(time, cpu, 'b-')
+    plt.subplot(4, 1, 3)
+    plt.plot(time[0:5000], cpu[0:5000], 'b-')
     plt.ylabel('cores')
     # Mem
-    plt.subplot(2, 1, 2)
-    plt.plot(time, mem, 'b-')
+    plt.subplot(4, 1, 4)
+    plt.plot(time[0:5000], mem[0:5000], 'b-')
     plt.ylabel('mem/core')
     
     plt.show()
