@@ -141,6 +141,9 @@ wall_time = [ parse_duration( job[ clmn["start"] ], job[ clmn["end"] ] ) \
 # Parallelism affinity per job cpu.time/CPUs
 pindex = [ float(parse(job[ clmn["time.cpu"] ])) \
             for job in dataset ]
+# Total cpu time
+cputime = [ float(parse(job[ clmn["time.cpu"] ])) * float(parse(job[ clmn["cpu"] ]))\
+            for job in dataset ]
             
 # Requested resources:
 # Memory consumption of each job per cpu
@@ -151,6 +154,9 @@ cpureq = [ int( parse( job[ clmn["cpu.req"] ] ) ) \
             for job in dataset ]
 # Parallelism affinity per job cpu.time/CPUs
 pindexreq = [ float(parse(job[ clmn["time.req"] ])) \
+            for job in dataset ]
+# Total cpu time requested
+cputimereq = [ float(parse(job[ clmn["time.req"] ])) * float(parse(job[ clmn["cpu.req"] ]))\
             for job in dataset ]
 
 # Normalize time to start at 0
