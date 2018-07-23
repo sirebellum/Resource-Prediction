@@ -106,9 +106,10 @@ filename = 'LANL-CM5-1994-0b'
 print( "Accessing {} dataset...".format( filename.strip(".swf") ) )
 file = open(filename, 'rb')
 
-# Ignore cases where # of used CPUs is unknown
+# Filtering options
 options = list()
-options.append( [ clmn["cpu"], "-unknown"] )
+options.append( [ clmn["cpu"], "-unknown"] ) # Ignore cases where # of used CPUs is unknown
+options.append( [ clmn["status"], "+0000"] ) # Ignore unfinished jobs
 
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line, options=options)]
