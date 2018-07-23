@@ -109,7 +109,8 @@ file = open(filename, 'rb')
 # Filtering options
 options = list()
 options.append( [ clmn["cpu"], "-unknown"] ) # Ignore cases where # of used CPUs is unknown
-options.append( [ clmn["status"], "+0000"] ) # Ignore unfinished jobs
+options.append( [ clmn["cpu.req"], "-unknown"] ) # Ignore cases where # of req. CPUs is unknown
+#options.append( [ clmn["status"], "+0000"] ) # Ignore unfinished jobs
 
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line, options=options)]
@@ -138,7 +139,18 @@ cpu = [ int( parse( job[ clmn["cpu"] ] ) ) \
 wall_time = [ parse_duration( job[ clmn["start"] ], job[ clmn["end"] ] ) \
             for job in dataset ]
 # Parallelism affinity per job cpu.time/CPUs
-pindex = [ float(parse(job[ clmn["time.cpu"] ])) / float(parse(job[ clmn["cpu"] ])) \
+pindex = [ float(parse(job[ clmn["time.cpu"] ])) \
+            for job in dataset ]
+            
+# Requested resources:
+# Memory consumption of each job per cpu
+memreq = [ mempercore( job[ clmn["mem.req"] ], job[ clmn["cpu.req"] ] ) \
+            for job in dataset ]
+# CPUs used for each job
+cpureq = [ int( parse( job[ clmn["cpu.req"] ] ) ) \
+            for job in dataset ]
+# Parallelism affinity per job cpu.time/CPUs
+pindexreq = [ float(parse(job[ clmn["time.req"] ])) \
             for job in dataset ]
 
 # sort by time
