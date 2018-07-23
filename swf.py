@@ -157,6 +157,9 @@ pindexreq = [ float(parse(job[ clmn["time.req"] ])) \
 _, mem = (list(t) for t in zip(*sorted(zip(time, mem))))
 _, cpu = (list(t) for t in zip(*sorted(zip(time, cpu))))
 _, pindex = (list(t) for t in zip(*sorted(zip(time, pindex))))
+_, memreq = (list(t) for t in zip(*sorted(zip(time, memreq))))
+_, cpureq = (list(t) for t in zip(*sorted(zip(time, cpureq))))
+_, pindexreq = (list(t) for t in zip(*sorted(zip(time, pindexreq))))
 time, wall_time = (list(t) for t in zip(*sorted(zip(time, wall_time))))
 
 if __name__ == "__main__":
