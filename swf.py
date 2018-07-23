@@ -108,7 +108,7 @@ file = open(filename, 'rb')
 
 # Ignore cases where # of used CPUs is unknown
 options = list()
-options.append( [ clmn["cpu"], "unknown"] )
+options.append( [ clmn["cpu"], "-unknown"] )
 
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line, options=options)]
