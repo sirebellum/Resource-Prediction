@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import sys, os, time
+import sys, os
 import numpy as np
 from datetime import datetime
 from operator import itemgetter
@@ -153,20 +153,27 @@ cpureq = [ int( parse( job[ clmn["cpu.req"] ] ) ) \
 pindexreq = [ float(parse(job[ clmn["time.req"] ])) \
             for job in dataset ]
 
+# Normalize time to start at 0
+min_time = min(time)
+time = list(map(lambda x: x - min_time, time))
 # sort by time
-_, mem = (list(t) for t in zip(*sorted(zip(time, mem))))
-_, cpu = (list(t) for t in zip(*sorted(zip(time, cpu))))
-_, pindex = (list(t) for t in zip(*sorted(zip(time, pindex))))
-_, memreq = (list(t) for t in zip(*sorted(zip(time, memreq))))
-_, cpureq = (list(t) for t in zip(*sorted(zip(time, cpureq))))
-_, pindexreq = (list(t) for t in zip(*sorted(zip(time, pindexreq))))
-time, wall_time = (list(t) for t in zip(*sorted(zip(time, wall_time))))
+data = list(zip(mem, cpu, pindex, memreq, cpureq, pindexreq, wall_time, time))
+data.sort(key=itemgetter(7))
+# Unzip
+mem = list(zip(*data))[0]
+cpu = list(zip(*data))[1]
+pindex = list(zip(*data))[2]
+memreq = list(zip(*data))[3]
+cpureq = list(zip(*data))[4]
+pindexreq = list(zip(*data))[5]
+wall_time = list(zip(*data))[6]
+time = list(zip(*data))[7]
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     ### Plot Data ###
-    duration = max(time[0:5000]) - min(time[0:5000])
+    duration = ( max(time[0:5000]) - min(time[0:5000]) ) / 1e5
     plt.xticks(np.arange(0, duration+100, duration/5))
     plt.xlabel('time (s)')
     # Wall time
