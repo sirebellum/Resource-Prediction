@@ -1,4 +1,5 @@
 from __future__ import print_function
+import os
 from sklearn import svm
 from sklearn.metrics import accuracy_score
 import numpy as np
@@ -26,24 +27,16 @@ def store_data(data, filename):
     pickle.dump(data, open( filename, "wb" ))
     print( "Wrote file to", filename )
 
-if __name__ == "__main__":
-    filename = "data_processing/data.p"
-    keypoints = pickle.load(open(filename, "rb"))
-
-    #Create dataset for svm
-    X = list()
-    Y = list()
-    for clas in keypoints:
-      for instance in keypoints[clas]:
-        Y.append(clas)
-        X.append(np.nan_to_num(np.concatenate((instance[0], instance[1]))))
+# SVM training
+def train_svm(X, Y):
 
     #Shuffle dataset
     combined = list(zip(X, Y))
     random.shuffle(combined)
-    X[:], Y[:] = zip(*combined)
+    X, Y = zip(*combined)
 
     #Train
+    print( "Training SVM..." )
     clf = svm.SVC(kernel='linear')
     dataset_size = len(Y)
     train_size = int(dataset_size*0.8)
@@ -59,3 +52,38 @@ if __name__ == "__main__":
     store = raw_input("Store model?(y/n): ")
     if store == "y":
         store_data(clf, "svm.p")
+        
+def supportvm(mem, cpu, pindex):
+    
+    global svm_model
+    if svm_model is None:
+        exit("Please train svm model first!")
+        
+    prediction = svm_model.predict(zip(mem, cpu, pindex))
+    
+    return prediction
+
+    
+### Module set-up ###
+# Check for svm model
+svm_file = "svm.p"
+if os.path.isfile(svm_file):
+    svm_model = pickle.load(open(svm_file, "rb"))
+else:
+    print("Missing svm model \"svm.p\"") # SVM needs to be trained and pickled
+    svm_model = None
+
+
+if __name__ == "__main__":
+
+    ### Train SVM ###
+    import swf
+    
+    # Get data
+    cpureq = swf.cpureq
+    memreq = swf.memreq
+    pindexreq = swf.pindexreq
+    wall_time = swf.wall_time
+    
+    data = list(zip(cpureq, memreq, pindexreq))
+    train_svm(data, wall_time)
