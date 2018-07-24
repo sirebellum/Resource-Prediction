@@ -5,6 +5,7 @@ import swf # Custom swf reading code
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
+import sklearn.metrics as metrics
 
 # Returns 1 if dividing by 0
 def safe_divide(value1, value2):
@@ -44,10 +45,12 @@ cputimereq = swf.cputimereq
 
 
 # Consolidate data
-data = [ [cpureq[x], memreq[x], cputimereq[x] ] for x in range(len(time)) ]
+data = [ [cpu[x], mem[x], pindex[x] ] for x in range(len(time)) ]
+datareq = [ [cpureq[x], memreq[x], pindexreq[x] ] for x in range(len(time)) ]
 
-# Predict
+# Predictions
 w = [predict( job[1], job[0], job[2] ) for job in data]
+wreq = [predict( job[1], job[0], job[2] ) for job in datareq]
 
 if __name__ == "__main__":
 
@@ -77,11 +80,16 @@ if __name__ == "__main__":
     # Match paper's orientation
     ax.invert_xaxis()
     # Plot real data over response surface
-    ax.scatter(mem, cpu, pindex, c=wall_time, cmap=plt.get_cmap('RdYlGn'), alpha=0.75)
-    ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.35)
+    ax.scatter(mem, cpu, pindex, c=wall_time, cmap=plt.get_cmap('RdYlGn'), alpha=0.5)
+    ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.5)
     
+    # Calculate R2 values 
+    actual = metrics.r2_score(wall_time, w)
+    predicted = metrics.r2_score(wall_time, wreq)
+    print( "Actual model accuracy: {}".format(actual) )
+    print( "Predictive model accuracy: {}".format(predicted) )
     
-    # Compute accuracy
+    # Compute ratio of predicted time to requested runtime as in paper
     ratios = [ safe_divide( w[i], cputimereq[i] ) for i in range(len(w[0:150000])) ]
     average_ratio = sum(ratios) / len(ratios)
     
@@ -92,6 +100,6 @@ if __name__ == "__main__":
     # Plot average response time ratio
     fig2 = plt.figure(2)
     fig2.add_subplot(111)
-    plt.plot(averages)
+    plt.plot(averages[0:70])
     
     plt.show()
