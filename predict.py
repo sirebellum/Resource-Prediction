@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import sklearn.metrics as metrics
+import models
 
 # Returns 1 if dividing by 0
 def safe_divide(value1, value2):
@@ -16,17 +17,9 @@ def safe_divide(value1, value2):
     return value1/value2
 
 # Predict response time based on weighted equations
-def predict(mem, cpu, pindex):
+def predict(mem, cpu, pindex, model):
 
-    b0, b1, b2, b3, b12, b13, b23, b11, b22, b33 = \
-        929.25, 2.832, -1.764e-4, 1.420, 1.272e-4, \
-        -3.666e-4, -6.989e-6, -6.903e-3, -1.087e-6, -6.075e-6
-        
-    # List of equations to be summed
-    equation = [b0, b1*cpu, b2*mem, b3*pindex, b12*cpu*mem, b13*cpu*pindex, \
-                b23*mem*pindex, b11*cpu*cpu, b22*mem*mem, b33*pindex*pindex]
-                
-    w = sum(equation)
+    w = model(mem, cpu, pindex)
 
     return w
     
@@ -49,8 +42,10 @@ data = [ [cpu[x], mem[x], pindex[x] ] for x in range(len(time)) ]
 datareq = [ [cpureq[x], memreq[x], pindexreq[x] ] for x in range(len(time)) ]
 
 # Predictions
-w = [predict( job[1], job[0], job[2] ) for job in data]
-wreq = [predict( job[1], job[0], job[2] ) for job in datareq]
+model = models.qrsm
+
+w = [predict( job[1], job[0], job[2], model ) for job in data]
+wreq = [predict( job[1], job[0], job[2], model ) for job in datareq]
 
 if __name__ == "__main__":
 
@@ -65,7 +60,7 @@ if __name__ == "__main__":
     
     # Generate points and calculate points' values
     test = np.array(np.meshgrid(x, y, z)).T.reshape(-1,3)
-    c = np.array([predict( axes[0], axes[1], axes[2] ) for axes in test])
+    c = np.array([predict( axes[0], axes[1], axes[2], model ) for axes in test])
     
     # Retrieve data points
     x = [ entry[0] for entry in test ]
