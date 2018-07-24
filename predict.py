@@ -29,19 +29,22 @@ def predict(mem, cpu, pindex):
 
     return w
     
- # Get data
+# Get data
 cpu = swf.cpu
 mem = swf.mem
 pindex = swf.pindex
 wall_time = swf.wall_time
 time = swf.time
+cputime = swf.cputime
 
 cpureq = swf.cpureq
 memreq = swf.memreq
 pindexreq = swf.pindexreq
+cputimereq = swf.cputimereq
+
 
 # Consolidate data
-data = [ [cpureq[x], memreq[x], pindexreq[x] ] for x in range(len(pindexreq)) ]
+data = [ [cpureq[x], memreq[x], cputimereq[x] ] for x in range(len(time)) ]
 
 # Predict
 w = [predict( job[1], job[0], job[2] ) for job in data]
@@ -74,12 +77,12 @@ if __name__ == "__main__":
     # Match paper's orientation
     ax.invert_xaxis()
     # Plot real data over response surface
-    ax.scatter(memreq, cpureq, pindexreq, c=pindex, cmap=plt.get_cmap('RdYlGn'), alpha=0.75)
+    ax.scatter(mem, cpu, pindex, c=wall_time, cmap=plt.get_cmap('RdYlGn'), alpha=0.75)
     ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.35)
     
     
     # Compute accuracy
-    ratios = [ safe_divide( w[i], pindexreq[i] ) for i in range(len(w)) ]
+    ratios = [ safe_divide( w[i], cputimereq[i] ) for i in range(len(w[0:150000])) ]
     average_ratio = sum(ratios) / len(ratios)
     
     averages = [ sum(ratios[i:i+1000]) / len(ratios[i:i+1000]) \
