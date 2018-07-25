@@ -73,16 +73,11 @@ def filter(line, options=None):
     # Parse line for ease of filtering
     string = parse_line(line)
     
-    # Filtering mode (no options for now)
-    if options is None:
-    
-        if ";" in str(line):
-            return False # Skip commented lines
-
-        return True
+    if ";" in str(line):
+        return False # Skip commented lines
 
     # Parse with options
-    else:
+    if options is not None:
         for option in options:
         
             if option[1][0] == "-": #Exclude
@@ -96,7 +91,7 @@ def filter(line, options=None):
             else:
                 exit("Please specify +/- before option: \"{}\"".format(option[1]))
         
-        return "Parsing unimplemented"
+    return True
         
 ### TBI: funcionify dataset data accumulation with filename and options arguments
 
