@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 from operator import itemgetter
 import scipy.stats as stats
+import pandas
 
 # dictionary that maps column name to integer index
 clmn  =  {"#": 0,
@@ -97,9 +98,14 @@ def filter(line, options=None):
     return True
 
 # Bin time into specified number of bins
-def bin_time(time, nbins):
+def bin_stuff(stuff, nbins):
 
-    return False
+    pandas_object = pandas.qcut(stuff, nbins)
+    codes = pandas_object.codes # Integer code corresponding to each bin
+    bins = pandas_object.categories # Actual bin ranges
+    bins = [ [bin.left, bin.right] for bin in bins ]
+
+    return codes, bins
 
 # Display histogram
 def histogram(x, name):
@@ -113,7 +119,6 @@ def histogram(x, name):
 
     plt.show()
         
-### TBI: funcionify dataset data accumulation with filename and options arguments
 
 ### Read Dataset ###
 # dataset from http://www.cs.huji.ac.il/labs/parallel/workload/
