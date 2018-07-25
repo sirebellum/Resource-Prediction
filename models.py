@@ -28,7 +28,11 @@ def store_data(data, filename):
     print( "Wrote file to", filename )
 
 # SVM training
-def train_svm(X, Y):
+def train_svm(x, y):
+
+    # Bin labels
+    Y, bins = swf.bin_stuff(y, 10)
+    X = x
 
     #Shuffle dataset
     combined = list(zip(X, Y))
@@ -50,7 +54,7 @@ def train_svm(X, Y):
     print("Accuracy:", accuracy_score(y_true, y_pred))
 
     store = raw_input("Store model?(y/n): ")
-    if store == "y":
+    if True:
         store_data(clf, "svm.p")
         
 def supportvm(mem, cpu, pindex):
