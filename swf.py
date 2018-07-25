@@ -154,11 +154,21 @@ pindexreq = [ float(parse(job[ clmn["time.req"] ])) \
 cputimereq = [ float(parse(job[ clmn["time.req"] ])) * float(parse(job[ clmn["cpu.req"] ]))\
             for job in dataset ]
 
+### Sort Data ###
 # Normalize time to start at 0
 min_time = min(time)
 time = list(map(lambda x: x - min_time, time))
 # sort by time
-data = list(zip(mem, cpu, pindex, memreq, cpureq, pindexreq, wall_time, time))
+data = list(zip(mem,
+                cpu,
+                pindex,
+                memreq,
+                cpureq,
+                pindexreq,
+                wall_time,
+                time,
+                cputime,
+                cputimereq))
 data.sort(key=itemgetter(7))
 # Unzip
 mem = list(zip(*data))[0]
@@ -169,6 +179,8 @@ cpureq = list(zip(*data))[4]
 pindexreq = list(zip(*data))[5]
 wall_time = list(zip(*data))[6]
 time = list(zip(*data))[7]
+cputime = list(zip(*data))[8]
+cputimereq = list(zip(*data))[9]
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
