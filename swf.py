@@ -4,6 +4,7 @@ import sys, os
 import numpy as np
 from datetime import datetime
 from operator import itemgetter
+import scipy.stats as stats
 
 # dictionary that maps column name to integer index
 clmn  =  {"#": 0,
@@ -41,7 +42,7 @@ def parse_duration(start, end):
         e = datetime.strptime(end, '%y/%m/%d-%H:%M:%S')
         elapsed = e - s
     except ValueError: # if unknown
-        return -1
+        return -1.0
         
     return elapsed.total_seconds()
     
@@ -75,6 +76,8 @@ def filter(line, options=None):
     
     if ";" in str(line):
         return False # Skip commented lines
+    if parse_duration(string[ clmn["start"] ], string[ clmn["end"] ]) < 0:
+        return False # Skip jobs with negative run-time
 
     # Parse with options
     if options is not None:
@@ -92,6 +95,23 @@ def filter(line, options=None):
                 exit("Please specify +/- before option: \"{}\"".format(option[1]))
         
     return True
+
+# Bin time into specified number of bins
+def bin_time(time, nbins):
+
+    return False
+
+# Display histogram
+def histogram(x, name):
+
+    # the histogram of the data
+    n, bins, patches = plt.hist(x, bins=50)
+
+    plt.xlabel(name)
+    plt.ylabel('Frequency')
+    plt.grid(True)
+
+    plt.show()
         
 ### TBI: funcionify dataset data accumulation with filename and options arguments
 
@@ -105,7 +125,9 @@ file = open(filename, 'rb')
 options = list()
 #options.append( [ clmn["cpu"], "-unknown"] ) # Ignore cases where # of used CPUs is unknown
 #options.append( [ clmn["cpu.req"], "-unknown"] ) # Ignore cases where # of req. CPUs is unknown
-#options.append( [ clmn["status"], "+0000"] ) # Ignore unfinished jobs
+options.append( [ clmn["status"], "+0000"] ) # Ignore unfinished jobs
+options.append( [ clmn["start"], "-unknown"] ) # Ignore cases where time is unknown
+options.append( [ clmn["end"], "-unknown"] ) # Ignore cases where time is unknown
 
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line, options=options)]
@@ -205,5 +227,9 @@ if __name__ == "__main__":
     plt.subplot(4, 1, 4)
     plt.plot(time[0:5000], mem[0:5000], 'b-')
     plt.ylabel('mem/core')
+    
+    fig2 = plt.figure(2)
+    fig2.add_subplot(111)
+    histogram(wall_time, "Wall Time")
     
     plt.show()
