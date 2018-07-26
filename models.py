@@ -38,13 +38,13 @@ def train_svm(x, y):
     combined = list(zip(X, Y))
     random.shuffle(combined)
     X, Y = zip(*combined)
-
+    
     #Train
     print( "Training SVM..." )
-    clf = svm.SVC(kernel='linear')
+    clf = svm.SVC(kernel='linear', cache_size=2048)
     dataset_size = len(Y)
     train_size = int(dataset_size*0.8)
-    clf.fit(X[0:train_size], Y[0:train_size])
+    clf.fit(X[0:50000], Y[0:50000])
 
     #Predict
     eval_size = dataset_size - train_size
@@ -53,8 +53,8 @@ def train_svm(x, y):
 
     print("Accuracy:", accuracy_score(y_true, y_pred))
 
-    store = raw_input("Store model?(y/n): ")
-    if True:
+    store = input("Store model?(y/n): ")
+    if raw_input == "y":
         store_data(clf, "svm.p")
         
 def supportvm(mem, cpu, pindex):
@@ -91,3 +91,4 @@ if __name__ == "__main__":
     
     data = list(zip(cpureq, memreq, pindexreq))
     train_svm(data, wall_time)
+
