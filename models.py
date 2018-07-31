@@ -26,14 +26,35 @@ def store_data(data, filename):
     
     pickle.dump(data, open( filename, "wb" ))
     print( "Wrote file to", filename )
+    
+def scale_data(input):
 
+    minimum = min(input)
+    range = max(input) - min(input)
+    temp = [ (item - minimum) / range for item in input ]
+        
+    return temp
+
+# SVM Data Preprocess
+def svm_preprocess(x, y):
+    
+    # Bin labels
+    nbins = 10
+    Y, bins = swf.bin_stuff(y, nbins)
+    
+    # Normalize features between 0 and 1
+    feature_sets = list(zip(*x))
+    X = [ scale_data(input) for input in feature_sets ]
+    X = list(zip(*X))
+    
+    return X, Y
+    
 # SVM training
 def train_svm(x, y):
 
-    # Bin labels
-    Y, bins = swf.bin_stuff(y, 10)
+    Y = y
     X = x
-
+    
     #Shuffle dataset
     combined = list(zip(X, Y))
     random.shuffle(combined)
@@ -44,7 +65,7 @@ def train_svm(x, y):
     clf = svm.SVC(kernel='linear', cache_size=2048)
     dataset_size = len(Y)
     train_size = int(dataset_size*0.8)
-    clf.fit(X[0:50000], Y[0:50000])
+    clf.fit(X[0:train_size], Y[0:train_size])
 
     #Predict
     eval_size = dataset_size - train_size
@@ -54,7 +75,7 @@ def train_svm(x, y):
     print("Accuracy:", accuracy_score(y_true, y_pred))
 
     store = input("Store model?(y/n): ")
-    if raw_input == "y":
+    if store == "y":
         store_data(clf, "svm.p")
         
 def supportvm(mem, cpu, pindex):
@@ -83,12 +104,11 @@ if __name__ == "__main__":
     ### Train SVM ###
     import swf
     
-    # Get data
+    # Get data and normalize
     cpureq = swf.cpureq
     memreq = swf.memreq
     pindexreq = swf.pindexreq
     wall_time = swf.wall_time
     
     data = list(zip(cpureq, memreq, pindexreq))
-    train_svm(data, wall_time)
-
+    train_svm(*svm_preprocess(data, wall_time))
