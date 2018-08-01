@@ -36,18 +36,21 @@ def scale_data(input):
     return temp
 
 # SVM Data Preprocess
-def svm_preprocess(x, y):
-    
-    # Bin labels
-    nbins = 10
-    Y, bins = swf.bin_stuff(y, nbins)
+def svm_preprocess(x, y=None):
     
     # Normalize features between 0 and 1
     feature_sets = list(zip(*x))
     X = [ scale_data(input) for input in feature_sets ]
     X = list(zip(*X))
     
-    return X, Y
+    # For training
+    if y is not None:
+        # Bin labels
+        nbins = 10
+        Y, bins = swf.bin_stuff(y, nbins)
+        return X, Y
+    
+    return X
     
 # SVM training
 def train_svm(x, y):
@@ -83,8 +86,10 @@ def supportvm(mem, cpu, pindex):
     global svm_model
     if svm_model is None:
         exit("Please train svm model first!")
-        
-    prediction = svm_model.predict(zip(mem, cpu, pindex))
+    
+    # Reshaped for svm_model's pleasure
+    data = [cpu, mem, pindex]
+    prediction = svm_model.predict([data])
     
     return prediction
 
