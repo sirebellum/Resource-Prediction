@@ -49,6 +49,7 @@ data = [ [cpu[x], mem[x], pindex[x] ] for x in range(swf.job_count) ]
 datareq = [ [cpureq[x], memreq[x], pindexreq[x] ] for x in range(swf.job_count) ]
 
 # Predictions
+#model = models.qrsm
 model = models.supportvm
 data = models.svm_preprocess(data)
 datareq = models.svm_preprocess(datareq)
@@ -58,7 +59,7 @@ wreq = [predict( job[1], job[0], job[2], model ) for job in datareq]
 
 
 if __name__ == "__main__":
-
+    '''
     # Plot prediction surface
     fig = plt.figure(1)
     ax = fig.add_subplot(111, projection='3d')
@@ -93,15 +94,15 @@ if __name__ == "__main__":
     predicted = metrics.r2_score(wall_time, wreq)
     print( "Actual model accuracy: {}".format(actual) )
     print( "Predictive model accuracy: {}".format(predicted) )
-    
+    '''    
     # Compute ratio of predicted time to requested runtime as in paper
-    ratios = [ safe_divide( w[i], cputimereq[i] ) for i in range(len(w[0:150000])) ]
+    ratios = [ safe_divide( w[i], wall_time[i] ) for i in range(len(w[0:150000])) ]
     average_ratio = sum(ratios) / len(ratios)
     
     averages = [ sum(ratios[i:i+1000]) / len(ratios[i:i+1000]) \
                          for i in range(0, len(ratios), 1000) ]
     
-    print("Average ratio of predicted to expected response time: {}".format(average_ratio))
+    print("Average ratio of predicted to actual response time: {}".format(average_ratio))
     # Plot average response time ratio
     fig2 = plt.figure(2)
     fig2.add_subplot(111)
