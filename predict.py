@@ -7,6 +7,7 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import sklearn.metrics as metrics
 import models
+from math import sqrt
 
 # Returns 1 if dividing by 0
 def safe_divide(value1, value2):
@@ -88,13 +89,13 @@ if __name__ == "__main__":
     # Plot real data over response surface
     ax.scatter(mem, cpu, pindex, c=wall_time, cmap=plt.get_cmap('RdYlGn'), alpha=0.5)
     ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.5)
-    
-    # Calculate R2 values 
-    actual = metrics.r2_score(wall_time, w)
-    predicted = metrics.r2_score(wall_time, wreq)
+    '''
+    # Calculate MAE values 
+    actual = sqrt(metrics.mean_absolute_error(wall_time, w))
+    predicted = sqrt(metrics.mean_absolute_error(wall_time, wreq))
     print( "Actual model accuracy: {}".format(actual) )
     print( "Predictive model accuracy: {}".format(predicted) )
-    '''    
+   
     # Compute ratio of predicted time to requested runtime as in paper
     ratios = [ safe_divide( w[i], wall_time[i] ) for i in range(len(w[0:150000])) ]
     average_ratio = sum(ratios) / len(ratios)
