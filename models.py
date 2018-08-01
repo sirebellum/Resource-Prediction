@@ -5,6 +5,7 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 import random
 import pickle
+import pandas
 
 # QRSM model from paper
 def qrsm(mem, cpu, pindex):
@@ -47,7 +48,7 @@ def svm_preprocess(x, y=None):
     if y is not None:
         # Bin labels
         nbins = 10
-        Y, bins = swf.bin_stuff(y, nbins)
+        Y, bins = bin_stuff(y, nbins)
         return X, Y
     
     return X
@@ -82,16 +83,26 @@ def train_svm(x, y):
         store_data(clf, "svm.p")
         
 def supportvm(mem, cpu, pindex):
-    
     global svm_model
+    
     if svm_model is None:
         exit("Please train svm model first!")
     
     # Reshaped for svm_model's pleasure
     data = [cpu, mem, pindex]
-    prediction = svm_model.predict([data])
+    prediction = svm_model.predict([data])[0]
     
     return prediction
+    
+# Bin time into specified number of bins
+def bin_stuff(stuff, nbins):
+
+    pandas_object = pandas.qcut(stuff, nbins)
+    codes = pandas_object.codes # Integer code corresponding to each bin
+    bins = pandas_object.categories # Actual bin ranges
+    bins = [ [bin.left, bin.right] for bin in bins ]
+
+    return codes, bins
 
     
 ### Module set-up ###
