@@ -83,7 +83,7 @@ def train_svm(x, y):
         store_data(clf, "svm.p")
         
 def supportvm(mem, cpu, pindex):
-    global svm_model
+    global svm_model, ranges
     
     if svm_model is None:
         exit("Please train svm model first!")
@@ -92,7 +92,18 @@ def supportvm(mem, cpu, pindex):
     data = [cpu, mem, pindex]
     prediction = svm_model.predict([data])[0]
     
-    return prediction
+    # Turn class into actual value
+    result = classify_bin(prediction, ranges)
+    
+    return result
+
+# Returns median value of bin for clazz
+def classify_bin(clazz, bins):
+
+    bin = bins[clazz]
+    value = (bin[1]-bin[0]) / 2 + bin[0]
+
+    return value
     
 # Bin time into specified number of bins
 def bin_stuff(stuff, nbins):
@@ -114,6 +125,11 @@ else:
     print("Missing svm model \"svm.p\"") # SVM needs to be trained and pickled
     svm_model = None
 
+### TODO: Setup class for svm with nclasses and class ranges ###
+# SVM Model input info
+nclasses = len(svm_model.classes_)
+import swf
+_, ranges = bin_stuff(swf.wall_time, nclasses)
 
 if __name__ == "__main__":
 

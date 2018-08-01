@@ -5,7 +5,6 @@ import numpy as np
 from datetime import datetime
 from operator import itemgetter
 import scipy.stats as stats
-import pandas
 
 # dictionary that maps column name to integer index
 clmn  =  {"#": 0,
@@ -96,16 +95,6 @@ def filter(line, options=None):
                 exit("Please specify +/- before option: \"{}\"".format(option[1]))
         
     return True
-
-# Bin time into specified number of bins
-def bin_stuff(stuff, nbins):
-
-    pandas_object = pandas.qcut(stuff, nbins)
-    codes = pandas_object.codes # Integer code corresponding to each bin
-    bins = pandas_object.categories # Actual bin ranges
-    bins = [ [bin.left, bin.right] for bin in bins ]
-
-    return codes, bins
 
 # Display histogram
 def histogram(x, name):

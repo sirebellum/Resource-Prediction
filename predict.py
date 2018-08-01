@@ -17,9 +17,16 @@ def safe_divide(value1, value2):
     return value1/value2
 
 # Predict response time based on weighted equations
+counter = 0
 def predict(mem, cpu, pindex, model):
-
+        
     w = model(mem, cpu, pindex)
+    
+    # Progress report
+    global counter
+    counter = counter + 1
+    if counter % 10000 == 0:
+        print (counter, "processed!")
 
     return w
     
@@ -38,14 +45,17 @@ cputimereq = swf.cputimereq
 
 
 # Consolidate data
-data = [ [cpu[x], mem[x], pindex[x] ] for x in range(len(time)) ]
-datareq = [ [cpureq[x], memreq[x], pindexreq[x] ] for x in range(len(time)) ]
+data = [ [cpu[x], mem[x], pindex[x] ] for x in range(swf.job_count) ]
+datareq = [ [cpureq[x], memreq[x], pindexreq[x] ] for x in range(swf.job_count) ]
 
 # Predictions
-model = models.qrsm
+model = models.supportvm
+data = models.svm_preprocess(data)
+datareq = models.svm_preprocess(datareq)
 
 w = [predict( job[1], job[0], job[2], model ) for job in data]
 wreq = [predict( job[1], job[0], job[2], model ) for job in datareq]
+
 
 if __name__ == "__main__":
 
