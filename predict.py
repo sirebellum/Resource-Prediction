@@ -96,6 +96,8 @@ if __name__ == "__main__":
     print( "Actual model accuracy: {}".format(actual) )
     print( "Predictive model accuracy: {}".format(predicted) )
    
+   ### TODO: Implement accuracy measurement that bins qrsm results ###
+   
     # Compute ratio of predicted time to requested runtime as in paper
     ratios = [ safe_divide( w[i], wall_time[i] ) for i in range(len(w[0:150000])) ]
     average_ratio = sum(ratios) / len(ratios)

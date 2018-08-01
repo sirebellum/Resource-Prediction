@@ -7,6 +7,9 @@ import random
 import pickle
 import pandas
 
+### TODO: Implement model that takes window of previous usage for each user
+### TODO: Implement easy multithreading interface for functions
+
 # QRSM model from paper
 def qrsm(mem, cpu, pindex):
 
