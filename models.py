@@ -124,15 +124,15 @@ def bin_stuff(stuff, nbins):
 svm_file = "svm.p"
 if os.path.isfile(svm_file):
     svm_model = pickle.load(open(svm_file, "rb"))
+
+    ### TODO: Setup class for svm with nclasses and class ranges ###
+    # SVM Model input info
+    nclasses = len(svm_model.classes_)
+    import swf
+    _, ranges = bin_stuff(swf.wall_time, nclasses)
 else:
     print("Missing svm model \"svm.p\"") # SVM needs to be trained and pickled
     svm_model = None
-
-### TODO: Setup class for svm with nclasses and class ranges ###
-# SVM Model input info
-nclasses = len(svm_model.classes_)
-import swf
-_, ranges = bin_stuff(swf.wall_time, nclasses)
 
 if __name__ == "__main__":
 
