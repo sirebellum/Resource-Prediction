@@ -7,21 +7,22 @@ from operator import itemgetter
 import scipy.stats as stats
 
 # dictionary that maps column name to integer index
-clmn  =  {"#": 0,
+clmn = {"#": 0,
           "submit": 1,
-          "start": 2,
-          "end": 3,
-          "cpu": 5,
-          "time.cpu": 7, # per core
-          "mem": 9,
-          "cpu.req": 4,
-          "time.req": 6, # requested cpu time
-          "mem.req": 8,
-          "status": 15,
-          "usr": 12,
-          "grp": 13,
-          "exec": 14,
-          "queue": 10}
+          "wait": 2,
+          "run": 3,
+          "cpu": 4,
+          "time.cpu": 5,
+          "mem": 6,
+          "cpu.req": 7,
+          "time.req": 8,
+          "mem.req": 9,
+          "status": 10,
+          "usr": 11,
+          "grp": 12,
+          "exec": 13,
+          "queue": 14,
+          "partition": 15}
 
 # Parse a single line from swf file, without filtering.
 # Returns a list of all the elements in the line.
@@ -111,17 +112,13 @@ def histogram(x, name):
 
 ### Read Dataset ###
 # dataset from http://www.cs.huji.ac.il/labs/parallel/workload/
-filename = 'LANL-CM5-1994-0b'
+filename = 'LANL-CM5-1994-4.1-cln.swf'
 print( "Accessing {} dataset...".format( filename.strip(".swf") ) )
 file = open(filename, 'rb')
 
 # Filtering options
 options = list()
-#options.append( [ clmn["cpu"], "-unknown"] ) # Ignore cases where # of used CPUs is unknown
-#options.append( [ clmn["cpu.req"], "-unknown"] ) # Ignore cases where # of req. CPUs is unknown
-options.append( [ clmn["status"], "+0000"] ) # Ignore unfinished jobs
-options.append( [ clmn["start"], "-unknown"] ) # Ignore cases where time is unknown
-options.append( [ clmn["end"], "-unknown"] ) # Ignore cases where time is unknown
+#options.append( [ clmn[""], ""] ) # Ignore cases where # of used CPUs is unknown
 
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line, options=options)]
@@ -129,8 +126,8 @@ dataset = [parse_line(line) for line in file if filter(line, options=options)]
 # Cursory test of dataset/clmn structure
 #for job in dataset[0:10]:
 #    print( "Job {}: {} cores requested, {} cores allocated".format(job[ clmn["#"] ],
-#                                                                   job[ clmn["Req CPUs"] ],
-#                                                                   job[ clmn["CPUs"] ]) )
+#                                                                   job[ clmn["cpu.req"] ],
+#                                                                   job[ clmn["cpu"] ]) )
 
 job_count = len(dataset)
 print( "{} total jobs in the dataset".format(job_count) )
