@@ -77,8 +77,6 @@ def filter(line, options=None):
     
     if ";" in str(line):
         return False # Skip commented lines
-    if parse_duration(string[ clmn["start"] ], string[ clmn["end"] ]) < 0:
-        return False # Skip jobs with negative run-time
 
     # Parse with options
     if options is not None:
@@ -123,19 +121,13 @@ options = list()
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line, options=options)]
 
-# Cursory test of dataset/clmn structure
-#for job in dataset[0:10]:
-#    print( "Job {}: {} cores requested, {} cores allocated".format(job[ clmn["#"] ],
-#                                                                   job[ clmn["cpu.req"] ],
-#                                                                   job[ clmn["cpu"] ]) )
-
 job_count = len(dataset)
 print( "{} total jobs in the dataset".format(job_count) )
 
 ### Accumulate Data ###
 # relative time to first job for each job
-first_job = dataset[0][ clmn[ "start" ] ]
-time = [ parse_duration( first_job, job[ clmn["start"] ] ) \
+first_job = dataset[0][ clmn[ "submit" ] ]
+time = [ int(job[ clmn["submit"] ]) \
             for job in dataset ]
 # Memory consumption of each job per cpu
 mem = [ mempercore( job[ clmn["mem"] ], job[ clmn["cpu"] ] ) \
@@ -144,7 +136,7 @@ mem = [ mempercore( job[ clmn["mem"] ], job[ clmn["cpu"] ] ) \
 cpu = [ int( parse( job[ clmn["cpu"] ] ) ) \
             for job in dataset ]
 # Wall time per job
-wall_time = [ parse_duration( job[ clmn["start"] ], job[ clmn["end"] ] ) \
+wall_time = [ int(job[ clmn["run"] ])  \
             for job in dataset ]
 # Parallelism affinity per job cpu.time/CPUs
 pindex = [ float(parse(job[ clmn["time.cpu"] ])) \
@@ -194,6 +186,14 @@ wall_time = list(zip(*data))[6]
 time = list(zip(*data))[7]
 cputime = list(zip(*data))[8]
 cputimereq = list(zip(*data))[9]
+
+# Cursory test of dataset/clmn structure
+#for x in range(0, 100):
+#    print( "Job {}: ran for {} seconds with {} cores requested, {} cores allocated" \
+#                                                           .format(dataset[x][ clmn["#"] ],
+#                                                                   wall_time[x],
+#                                                                   cpureq[x],
+#                                                                   cpu[x]) )
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
