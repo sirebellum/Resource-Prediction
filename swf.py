@@ -108,9 +108,7 @@ def histogram(x, name):
     # Log y scale
     plt.yscale('log', nonposy='clip')
 
-    plt.show()
-        
-
+    
 ### Read Dataset ###
 # dataset from http://www.cs.huji.ac.il/labs/parallel/workload/
 filename = 'LANL-CM5-1994-4.1-cln.swf'
