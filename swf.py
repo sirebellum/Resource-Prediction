@@ -158,7 +158,10 @@ pindexreq = [ float(parse(job[ clmn["time.req"] ])) \
 # Total cpu time requested
 cputimereq = [ float(parse(job[ clmn["time.req"] ])) * float(parse(job[ clmn["cpu.req"] ]))\
             for job in dataset ]
-
+# User for each job
+usr = [ int(job[ clmn["usr"] ]) \
+            for job in dataset ]
+            
 ### Sort Data ###
 # Normalize time to start at 0
 min_time = min(time)
@@ -176,16 +179,17 @@ data = list(zip(mem,
                 cputimereq))
 data.sort(key=itemgetter(7))
 # Unzip
-mem = list(zip(*data))[0]
-cpu = list(zip(*data))[1]
-pindex = list(zip(*data))[2]
-memreq = list(zip(*data))[3]
-cpureq = list(zip(*data))[4]
-pindexreq = list(zip(*data))[5]
-wall_time = list(zip(*data))[6]
-time = list(zip(*data))[7]
-cputime = list(zip(*data))[8]
-cputimereq = list(zip(*data))[9]
+temp = list(zip(*data))
+mem = temp[0]
+cpu = temp[1]
+pindex = temp[2]
+memreq = temp[3]
+cpureq = temp[4]
+pindexreq = temp[5]
+wall_time = temp[6]
+time = temp[7]
+cputime = temp[8]
+cputimereq = temp[9]
 
 # Cursory test of dataset/clmn structure
 #for x in range(0, 100):

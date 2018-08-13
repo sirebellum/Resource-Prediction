@@ -69,9 +69,10 @@ def train_svm(x, y):
     
     #Train
     print( "Training SVM..." )
-    clf = svm.SVC(kernel='linear', cache_size=2048)
+    clf = svm.SVC(kernel='rbf', cache_size=2048)
     dataset_size = len(Y)
     train_size = int(dataset_size*0.8)
+    train_size = 20000
     clf.fit(X[0:train_size], Y[0:train_size])
 
     #Predict
@@ -140,10 +141,6 @@ if __name__ == "__main__":
     import swf
     
     # Get data and normalize
-    cpureq = swf.cpureq
-    memreq = swf.memreq
-    pindexreq = swf.pindexreq
-    wall_time = swf.wall_time
-    
-    data = list(zip(cpureq, memreq, pindexreq))
+    data = list(zip(swf.cpu, swf.mem, swf.pindex, swf.usr))
+    # Train
     train_svm(*svm_preprocess(data, wall_time))
