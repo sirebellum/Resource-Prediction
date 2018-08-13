@@ -143,4 +143,4 @@ if __name__ == "__main__":
     # Get data and normalize
     data = list(zip(swf.cpu, swf.mem, swf.pindex, swf.usr))
     # Train
-    train_svm(*svm_preprocess(data, wall_time))
+    train_svm(*svm_preprocess(data, swf.wall_time))
