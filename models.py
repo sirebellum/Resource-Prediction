@@ -11,7 +11,7 @@ import pandas
 ### TODO: Implement easy multithreading interface for functions
 
 # QRSM model from paper
-def qrsm(mem, cpu, pindex):
+def qrsm(mem, cpu, pindex, usr):
 
     b0, b1, b2, b3, b12, b13, b23, b11, b22, b33 = \
         929.25, 2.832, -1.764e-4, 1.420, 1.272e-4, \
