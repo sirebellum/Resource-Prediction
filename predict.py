@@ -51,10 +51,10 @@ data = [ [cpu[x], mem[x], pindex[x], usr[x] ] for x in range(swf.job_count) ]
 datareq = [ [cpureq[x], memreq[x], pindexreq[x], usr[x] ] for x in range(swf.job_count) ]
 
 # Predictions
-#model = models.qrsm
-model = models.supportvm
-data = models.svm_preprocess(data)
-datareq = models.svm_preprocess(datareq)
+model = models.qrsm
+#model = models.supportvm
+#data = models.svm_preprocess(data)
+#datareq = models.svm_preprocess(datareq)
 
 w = [predict( job, model ) for job in data]
 wreq = [predict( job, model ) for job in datareq]
@@ -92,10 +92,11 @@ if __name__ == "__main__":
     ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.5)
     '''
     # Calculate MAE values 
+    mean_time = sum(wall_time)/len(wall_time)
     actual = sqrt(metrics.mean_absolute_error(wall_time, w))
     predicted = sqrt(metrics.mean_absolute_error(wall_time, wreq))
-    print( "Actual model accuracy: {}".format(actual) )
-    print( "Predictive model accuracy: {}".format(predicted) )
+    print( "Actual model accuracy: {}, {:.2f}% of mean time".format(actual, 100*actual/mean_time) )
+    print( "Predictive model accuracy: {}, {:.2f}% of mean time".format(predicted, 100*actual/mean_time) )
    
    ### TODO: Implement accuracy measurement that bins qrsm results ###
    
