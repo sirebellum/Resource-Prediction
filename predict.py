@@ -19,9 +19,9 @@ def safe_divide(value1, value2):
 
 # Predict response time based on weighted equations
 counter = 0
-def predict(mem, cpu, pindex, model):
+def predict(data, model):
         
-    w = model(mem, cpu, pindex)
+    w = model(*data)
     
     # Progress report
     global counter
@@ -38,6 +38,7 @@ pindex = swf.pindex
 wall_time = swf.wall_time
 time = swf.time
 cputime = swf.cputime
+usr = swf.usr
 
 cpureq = swf.cpureq
 memreq = swf.memreq
@@ -46,8 +47,8 @@ cputimereq = swf.cputimereq
 
 
 # Consolidate data
-data = [ [cpu[x], mem[x], pindex[x] ] for x in range(swf.job_count) ]
-datareq = [ [cpureq[x], memreq[x], pindexreq[x] ] for x in range(swf.job_count) ]
+data = [ [cpu[x], mem[x], pindex[x], usr[x] ] for x in range(swf.job_count) ]
+datareq = [ [cpureq[x], memreq[x], pindexreq[x], usr[x] ] for x in range(swf.job_count) ]
 
 # Predictions
 #model = models.qrsm
@@ -55,8 +56,8 @@ model = models.supportvm
 data = models.svm_preprocess(data)
 datareq = models.svm_preprocess(datareq)
 
-w = [predict( job[1], job[0], job[2], model ) for job in data]
-wreq = [predict( job[1], job[0], job[2], model ) for job in datareq]
+w = [predict( job, model ) for job in data]
+wreq = [predict( job, model ) for job in datareq]
 
 
 if __name__ == "__main__":

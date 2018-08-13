@@ -86,14 +86,14 @@ def train_svm(x, y):
     if store == "y":
         store_data(clf, "svm.p")
         
-def supportvm(mem, cpu, pindex):
+def supportvm(mem, cpu, pindex, usr):
     global svm_model, ranges
     
     if svm_model is None:
         exit("Please train svm model first!")
     
     # Reshaped for svm_model's pleasure
-    data = [cpu, mem, pindex]
+    data = [cpu, mem, pindex, usr]
     prediction = svm_model.predict([data])[0]
     
     # Turn class into actual value
