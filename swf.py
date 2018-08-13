@@ -104,6 +104,9 @@ def histogram(x, name):
     plt.xlabel(name)
     plt.ylabel('Frequency')
     plt.grid(True)
+    
+    # Log y scale
+    plt.yscale('log', nonposy='clip')
 
     plt.show()
         
