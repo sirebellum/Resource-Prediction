@@ -55,6 +55,29 @@ def svm_preprocess(x, y=None):
         return X, Y
     
     return X
+
+# Bin time into specified number of bins
+def bin_stuff(stuff, nbins):
+
+    # Quantized binning
+    pandas_object = pandas.qcut(stuff, nbins)
+    codes = pandas_object.codes # Integer code corresponding to each bin
+    bins = pandas_object.categories # Actual bin ranges
+    bins = [ [bin.left, bin.right] for bin in bins ]
+
+    # Equidistant binning
+    #hist, bin_edges = np.histogram(stuff, bins=nbins)
+    # Create list of bins
+    #bins = [ [bin_edges[i], bin_edges[i+1]] for i in range(0, len(bin_edges)-1) ]
+    # Classify stuff into bins
+    #codes = list()
+    #for thing in stuff:
+    #    for x in range(0, len(bins)):
+    #        if bins[x][0] <= thing <= bins[x][1]:
+    #            codes.append(x)
+    #            break
+    
+    return codes, bins
     
 # SVM training
 def train_svm(x, y):
@@ -72,7 +95,7 @@ def train_svm(x, y):
     clf = svm.SVC(kernel='rbf', cache_size=2048)
     dataset_size = len(Y)
     train_size = int(dataset_size*0.8)
-    train_size = 20000
+    train_size = 30000
     clf.fit(X[0:train_size], Y[0:train_size])
 
     #Predict
@@ -108,16 +131,6 @@ def classify_bin(clazz, bins):
     value = (bin[1]-bin[0]) / 2 + bin[0]
 
     return value
-    
-# Bin time into specified number of bins
-def bin_stuff(stuff, nbins):
-
-    pandas_object = pandas.qcut(stuff, nbins)
-    codes = pandas_object.codes # Integer code corresponding to each bin
-    bins = pandas_object.categories # Actual bin ranges
-    bins = [ [bin.left, bin.right] for bin in bins ]
-
-    return codes, bins
 
     
 ### Module set-up ###
