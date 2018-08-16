@@ -38,11 +38,11 @@ def accuracy_dist(actual, pred):
     for item in diff:
         if item <= 10:
             error[0] = error[0] + 1
-        elif item <= 60:
+        if item <= 60:
             error[1] = error[1] + 1
-        elif item <= 60*10:
+        if item <= 60*10:
             error[2] = error[2] + 1
-        elif item <= 60*100:
+        if item <= 60*100:
             error[3] = error[3] + 1
     
     return error
