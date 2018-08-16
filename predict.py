@@ -55,9 +55,10 @@ wall_time = swf.wall_time
 time = swf.time
 cputime = swf.cputime
 usr = swf.usr
+exe = swf.exe
 
 # Consolidate data
-data = [ [cpu[x], mem[x], pindex[x], usr[x] ] for x in range(swf.job_count) ]
+data = [ [cpu[x], mem[x], pindex[x], usr[x], exe[x] ] for x in range(swf.job_count) ]
 
 # Predictions
 #model = models.qrsm
@@ -113,6 +114,7 @@ if __name__ == "__main__":
     print( "{:.2f}% of errors below 60 minutes".format(100*accuracy[3]/swf.job_count) )
     print( "{:.2f}% of errors above 60 minutes".format(100*(1-accuracy[3]/swf.job_count)) )
    
+    '''
     # Compute ratio of predicted time to requested runtime as in paper
     ratios = [ safe_divide( w[i], wall_time[i] ) for i in range(len(w[0:150000])) ]
     average_ratio = sum(ratios) / len(ratios)
@@ -127,3 +129,4 @@ if __name__ == "__main__":
     plt.plot(averages[0:70])
     
     plt.show()
+    '''

@@ -162,6 +162,9 @@ cputimereq = [ float(parse(job[ clmn["time.req"] ])) * float(parse(job[ clmn["cp
 # User for each job
 usr = [ int(job[ clmn["usr"] ]) \
             for job in dataset ]
+# Exec for each job
+exe = [ int(job[ clmn["exec"] ]) \
+            for job in dataset ]
             
 ### Sort Data ###
 # Normalize time to start at 0

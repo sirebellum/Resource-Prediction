@@ -11,7 +11,7 @@ import pandas
 ### TODO: Implement easy multithreading interface for functions
 
 # QRSM model from paper
-def qrsm(mem, cpu, pindex, usr):
+def qrsm(mem, cpu, pindex, usr, exe):
 
     b0, b1, b2, b3, b12, b13, b23, b11, b22, b33 = \
         929.25, 2.832, -1.764e-4, 1.420, 1.272e-4, \
@@ -106,17 +106,18 @@ def train_svm(x, y):
     print("Accuracy:", accuracy_score(y_true, y_pred))
 
     store = input("Store model?(y/n): ")
+    store = "y"
     if store == "y":
         store_data(clf, "svm.p")
         
-def supportvm(mem, cpu, pindex, usr):
+def supportvm(mem, cpu, pindex, usr, exe):
     global svm_model, ranges
     
     if svm_model is None:
         exit("Please train svm model first!")
     
     # Reshaped for svm_model's pleasure
-    data = [cpu, mem, pindex, usr]
+    data = [cpu, mem, pindex, usr, exe]
     prediction = svm_model.predict([data])[0]
     
     # Turn class into actual value
@@ -149,7 +150,7 @@ if __name__ == "__main__":
     import swf
     
     # Get data and normalize
-    data = list(zip(swf.cpu, swf.mem, swf.pindex, swf.usr))
+    data = list(zip(swf.cpu, swf.mem, swf.pindex, swf.usr, swf.exe))
     # Train
     train_svm(*svm_preprocess(data, swf.wall_time))
     
