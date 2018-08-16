@@ -96,10 +96,10 @@ def filter(line, options=None):
     return True
 
 # Display histogram
-def histogram(x, name):
+def histogram(x, name, nbins=10):
 
     # the histogram of the data
-    n, bins, patches = plt.hist(x, bins=50)
+    n, bins, patches = plt.hist(x, bins=nbins)
 
     plt.xlabel(name)
     plt.ylabel('Frequency')
@@ -227,5 +227,5 @@ if __name__ == "__main__":
     fig2 = plt.figure(2)
     fig2.add_subplot(111)
     histogram(wall_time, "Wall Time")
-    
+
     plt.show()
