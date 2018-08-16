@@ -117,7 +117,7 @@ def supportvm(mem, cpu, pindex, usr, exe):
         exit("Please train svm model first!")
     
     # Reshaped for svm_model's pleasure
-    data = [cpu, mem, pindex, usr, exe]
+    data = [cpu, mem, usr, exe]
     prediction = svm_model.predict([data])[0]
     
     # Turn class into actual value
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     import swf
     
     # Get data and normalize
-    data = list(zip(swf.cpu, swf.mem, swf.pindex, swf.usr, swf.exe))
+    data = list(zip(swf.cpu, swf.mem, swf.usr, swf.exe))
     # Train
     train_svm(*svm_preprocess(data, swf.wall_time))
     
