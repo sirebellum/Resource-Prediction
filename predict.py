@@ -42,8 +42,6 @@ def accuracy_dist(actual, pred):
             error[1] = error[1] + 1
         if item <= 60*10:
             error[2] = error[2] + 1
-        if item <= 60*100:
-            error[3] = error[3] + 1
     
     return error
 
@@ -112,7 +110,6 @@ if __name__ == "__main__":
     print( "{:.2f}% of errors below 1  minute".format(100*accuracy[1]/swf.job_count) )
     print( "{:.2f}% of errors below 10 minutes".format(100*accuracy[2]/swf.job_count) )
     print( "{:.2f}% of errors below 60 minutes".format(100*accuracy[3]/swf.job_count) )
-    print( "{:.2f}% of errors above 60 minutes".format(100*(1-accuracy[3]/swf.job_count)) )
    
     '''
     # Compute ratio of predicted time to requested runtime as in paper
