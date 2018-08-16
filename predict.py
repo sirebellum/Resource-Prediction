@@ -42,13 +42,15 @@ def accuracy_dist(actual, pred):
             error[1] = error[1] + 1
         if item <= 60*10:
             error[2] = error[2] + 1
+        if item <= 60*60:
+            error[3] = error[3] + 1
     
     return error
 
 # Get data
 cpu = swf.cpu
 mem = swf.mem
-pindex = swf.pindex
+pindexreq= swf.pindexreq
 wall_time = swf.wall_time
 time = swf.time
 cputime = swf.cputime
@@ -56,12 +58,12 @@ usr = swf.usr
 exe = swf.exe
 
 # Consolidate data
-data = [ [cpu[x], mem[x], pindex[x], usr[x], exe[x] ] for x in range(swf.job_count) ]
+data = [ [cpu[x], mem[x], pindexreq[x], usr[x], exe[x] ] for x in range(swf.job_count) ]
 
 # Predictions
-#model = models.qrsm
-model = models.supportvm
-data = models.svm_preprocess(data)
+model = models.qrsm
+#model = models.supportvm
+#data = models.svm_preprocess(data)
 
 w = [predict( job, model ) for job in data]
 
@@ -95,7 +97,7 @@ if __name__ == "__main__":
     # Match paper's orientation
     ax.invert_xaxis()
     # Plot real data over response surface
-    ax.scatter(mem, cpu, pindex, c=wall_time, cmap=plt.get_cmap('RdYlGn'), alpha=0.5)
+    ax.scatter(mem, cpu, pindexreq, c=wall_time, cmap=plt.get_cmap('RdYlGn'), alpha=0.5)
     ax.scatter(x, y, z, c=c, cmap=plt.get_cmap('RdYlGn'), alpha=0.5)
     '''
     # Calculate MAE values 
