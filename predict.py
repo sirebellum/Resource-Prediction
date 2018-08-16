@@ -2,7 +2,6 @@ from __future__ import print_function
 
 import sys, os
 import swf # Custom swf reading code
-import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import sklearn.metrics as metrics
@@ -31,6 +30,23 @@ def predict(data, model):
 
     return w
     
+def accuracy_dist(actual, pred):
+    
+    diff = [ abs(actual[x] - pred[x]) for x in range(0, len(actual)) ]
+    # count of errors below times
+    error = [0, 0, 0, 0]
+    for item in diff:
+        if item <= 10:
+            error[0] = error[0] + 1
+        elif item <= 60:
+            error[1] = error[1] + 1
+        elif item <= 60*10:
+            error[2] = error[2] + 1
+        elif item <= 60*100:
+            error[3] = error[3] + 1
+    
+    return error
+
 # Get data
 cpu = swf.cpu
 mem = swf.mem
@@ -40,27 +56,19 @@ time = swf.time
 cputime = swf.cputime
 usr = swf.usr
 
-cpureq = swf.cpureq
-memreq = swf.memreq
-pindexreq = swf.pindexreq
-cputimereq = swf.cputimereq
-
-
 # Consolidate data
 data = [ [cpu[x], mem[x], pindex[x], usr[x] ] for x in range(swf.job_count) ]
-datareq = [ [cpureq[x], memreq[x], pindexreq[x], usr[x] ] for x in range(swf.job_count) ]
 
 # Predictions
-model = models.qrsm
-#model = models.supportvm
-#data = models.svm_preprocess(data)
-#datareq = models.svm_preprocess(datareq)
+#model = models.qrsm
+model = models.supportvm
+data = models.svm_preprocess(data)
 
 w = [predict( job, model ) for job in data]
-wreq = [predict( job, model ) for job in datareq]
 
 
 if __name__ == "__main__":
+    import matplotlib.pyplot as plt
     '''
     # Plot prediction surface
     fig = plt.figure(1)
@@ -94,11 +102,16 @@ if __name__ == "__main__":
     # Calculate MAE values 
     mean_time = sum(wall_time)/len(wall_time)
     actual = sqrt(metrics.mean_absolute_error(wall_time, w))
-    predicted = sqrt(metrics.mean_absolute_error(wall_time, wreq))
-    print( "Actual model accuracy: {}, {:.2f}% of mean time".format(actual, 100*actual/mean_time) )
-    print( "Predictive model accuracy: {}, {:.2f}% of mean time".format(predicted, 100*actual/mean_time) )
+    print( "Mean error: {}, {:.2f}% of mean time" \
+                    .format(actual, 100*actual/mean_time) )
    
-   ### TODO: Implement accuracy measurement that bins qrsm results ###
+    # Accuracy [below 10 seconds, below 1 minute, below 10 minutes, below 60 minutes]
+    accuracy = accuracy_dist(wall_time, w)
+    print( "{:.2f}% of errors below 10 seconds".format(100*accuracy[0]/swf.job_count) )
+    print( "{:.2f}% of errors below 1  minute".format(100*accuracy[1]/swf.job_count) )
+    print( "{:.2f}% of errors below 10 minutes".format(100*accuracy[2]/swf.job_count) )
+    print( "{:.2f}% of errors below 60 minutes".format(100*accuracy[3]/swf.job_count) )
+    print( "{:.2f}% of errors above 60 minutes".format(100*(1-accuracy[3]/swf.job_count)) )
    
     # Compute ratio of predicted time to requested runtime as in paper
     ratios = [ safe_divide( w[i], wall_time[i] ) for i in range(len(w[0:150000])) ]
