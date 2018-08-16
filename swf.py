@@ -117,7 +117,7 @@ file = open(filename, 'rb')
 
 # Filtering options
 options = list()
-#options.append( [ clmn[""], ""] ) # Ignore cases where # of used CPUs is unknown
+#options.append( [ clmn["status"], "+1"] ) # Ignore cases where job didn't complete
 
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line, options=options)]
