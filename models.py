@@ -35,6 +35,10 @@ def scale_data(input):
 
     minimum = min(input)
     range = max(input) - min(input)
+    
+    if range == 0: # If no data in datset
+        return [0] * len(input)
+        
     temp = [ (item - minimum) / range for item in input ]
         
     return temp
