@@ -61,9 +61,9 @@ exe = swf.exe
 data = [ [cpu[x], mem[x], pindexreq[x], usr[x], exe[x] ] for x in range(swf.job_count) ]
 
 # Predictions
-model = models.qrsm
-#model = models.supportvm
-#data = models.svm_preprocess(data)
+#model = models.qrsm
+model = models.supportvm
+data = models.svm_preprocess(data)
 
 w = [predict( job, model ) for job in data]
 
