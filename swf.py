@@ -111,13 +111,13 @@ def histogram(x, name, nbins=10):
     
 ### Read Dataset ###
 # dataset from http://www.cs.huji.ac.il/labs/parallel/workload/
-filename = 'UniLu-Gaia-2014-2.swf'
+filename = 'ANL-Intrepid-2009-1.swf'
 print( "Accessing {} dataset...".format( filename.strip(".swf") ) )
 file = open(filename, 'rb')
 
 # Filtering options
 options = list()
-options.append( [ clmn["status"], "+1"] ) # Ignore cases where job didn't complete
+#options.append( [ clmn["status"], "+1"] ) # Ignore cases where job didn't complete
 
 # parse swf file line by line
 dataset = [parse_line(line) for line in file if filter(line, options=options)]
