@@ -36,16 +36,29 @@ def accuracy_dist(actual, pred):
     # count of errors below times
     error = [0, 0, 0, 0]
     for item in diff:
-        if item <= 10:
+        if item <= 10: # Less than 10 seconds
             error[0] = error[0] + 1
-        if item <= 60:
+        if item <= 60: # Less than a minute
             error[1] = error[1] + 1
-        if item <= 60*10:
+        if item <= 60*10: # Less than 10 minutes
             error[2] = error[2] + 1
-        if item <= 60*60:
+        if item <= 60*60: # Less than an hour
             error[3] = error[3] + 1
     
     return error
+    
+def accuracy_ratio(actual, pred):
+
+    def ratio(act, sup):
+        if act == sup:  return 1
+        elif act > sup: return sup/act
+        elif act < sup: return act/sup
+        
+    ratios = [ ratio( actual[x], pred[x] ) for x in range(0, len(actual)) ]
+    
+    # Average ratio    
+    return sum(ratios)/len(ratios)
+
 
 # Get data
 cpu = swf.cpu
@@ -112,6 +125,10 @@ if __name__ == "__main__":
     print( "{:.2f}% of errors below 1  minute".format(100*accuracy[1]/swf.job_count) )
     print( "{:.2f}% of errors below 10 minutes".format(100*accuracy[2]/swf.job_count) )
     print( "{:.2f}% of errors below 60 minutes".format(100*accuracy[3]/swf.job_count) )
+    
+    # Accuracy metric from Trade-off between... runtime estimates Yuping et al.
+    ratio = accuracy_ratio(wall_time, w)
+    print( "Ratio accuracy is {}".format(ratio) )
    
     '''
     # Compute ratio of predicted time to requested runtime as in paper
